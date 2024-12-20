@@ -1,0 +1,27 @@
+type Query {
+  getTeachers: TeachersResponse
+}
+
+type Teacher {
+  id: ID!
+  userProfile: UserProfile!
+  userProfileId: Int!
+  matters: [AcademicMatters]
+}
+
+type AcademicMatters {
+  id: ID!
+  matter: String
+  teacher: Teacher
+  teacherId: Int
+}
+
+type TeacherResponse {
+  data: Teacher
+  msg: String
+}
+
+type TeachersResponse {
+  data: [Teacher]
+  msg: String
+}

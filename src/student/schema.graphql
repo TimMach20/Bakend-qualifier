@@ -1,0 +1,7 @@
+type Student {
+  id: ID!
+  userProfile: UserProfile!
+  userProfileId: Int!
+  course: Course!
+  courseId: Int!
+}

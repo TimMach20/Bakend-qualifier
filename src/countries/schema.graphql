@@ -1,0 +1,31 @@
+type Query {
+  getCountries: ResponseCountries
+
+  getCountryById(id: ID!): ResponseCountry
+}
+
+type Mutation {
+  addCountry(name: String!, code: String!, url: String, image: String): ResponseCountry
+
+  updateCountry(id: ID!, name: String!, code: String!, url: String, image: String): ResponseCountry
+
+  deleteCountry(id: ID!): ResponseCountry
+}
+
+type Country {
+  id: ID!
+  name: String!
+  code: String!
+  url: String
+  image: String
+}
+
+type ResponseCountry {
+  data: Country
+  msg: String
+}
+
+type ResponseCountries {
+  data: [Country]
+  msg: String
+}

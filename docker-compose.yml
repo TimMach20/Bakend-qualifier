@@ -1,0 +1,85 @@
+services:
+  postgres_db:
+    image: postgres:17.0-alpine3.20
+    container_name: postgres_db
+    # restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - PGDATA=/data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - '5432:5432'
+    networks:
+      - postgres
+
+  dbeaver:
+    image: dbeaver/cloudbeaver:24.2.3
+    container_name: dbeaver
+    environment:
+      - CB_ADMIN_NAME=admin
+      - CB_ADMIN_PASSWORD=admin
+    volumes:
+      - dbeaver:/opt/cloudbeaver/workspace
+    ports:
+      - '8081:8978'
+    networks:
+      - postgres
+    depends_on:
+      - postgres_db
+
+  app_dev:
+    container_name: app_dev
+    # restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+    # command: ['bash', '-c', 'npm install --legacy-peer-deps && npx prisma generate && npx prisma migrate deploy && npm run seed && npm run dev']
+    command: ['bash', '-c', 'npm run dev']
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - '${PORT}:4000'
+    networks:
+      - postgres
+    depends_on:
+      - postgres_db
+
+  app_prod:
+    container_name: app_prod
+    # restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+    command: >
+      bash -c "
+      npx prisma migrate deploy &&
+      npm run seed &&
+      npm start
+      "
+    ports:
+      - '4001:4000'
+    networks:
+      - postgres
+    depends_on:
+      - postgres_db
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0' # Limita el uso de CPU a 1 núcleo
+          memory: '512M' # Limita la memoria a 512 MB
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
+  dbeaver:

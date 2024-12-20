@@ -1,0 +1,137 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Country {
+  id    Int     @id @default(autoincrement())
+  name  String
+  code  String
+  url   String?
+  image String?
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  role        ROLE
+  dni         String       @unique
+  password    String
+  created     DateTime     @default(now())
+  modified    DateTime?    @updatedAt
+  deleted     DateTime?
+  userProfile UserProfile?
+  userToken   UserToken[]
+}
+
+model UserToken {
+  id       Int       @id @default(autoincrement())
+  user     User      @relation(fields: [userId], references: [id])
+  userId   Int
+  token    String    @unique
+  revoked  DateTime?
+  created  DateTime  @default(now())
+  modified DateTime  @updatedAt
+}
+
+model UserProfile {
+  id          Int       @id @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int       @unique
+  name        String
+  lastname    String
+  description String?
+  photo       String? //URL 
+  created     DateTime  @default(now())
+  modified    DateTime? @updatedAt
+  student     Student?
+  teacher     Teacher?
+}
+
+model Student {
+  id            Int         @id @default(autoincrement())
+  userProfile   UserProfile @relation(fields: [userProfileId], references: [id])
+  userProfileId Int         @unique
+  course        Course?      @relation(fields: [courseId], references: [id])
+  courseId      Int?
+  scores        Score[]
+}
+
+model Teacher {
+  id            Int              @id @default(autoincrement())
+  userProfile   UserProfile      @relation(fields: [userProfileId], references: [id])
+  userProfileId Int              @unique
+  matters       AcademicMatter[]
+}
+
+model Course {
+  id              Int                      @id @default(autoincrement())
+  degree          DEGREE
+  section         SECTION
+  studens         Student[]
+  academicmatters AcademicMatterOnCourse[]
+
+  @@unique([degree, section])
+}
+
+model AcademicMatter {
+  id             Int                      @id @default(autoincrement())
+  matter         String
+  teacher        Teacher                  @relation(fields: [teacherId], references: [id])
+  teacherId      Int 
+  course         AcademicMatterOnCourse[]
+  qualifications Score[]
+}
+
+model AcademicMatterOnCourse {
+  academicmatter   AcademicMatter @relation(fields: [academicmatterId], references: [id])
+  academicmatterId Int // relation scalar field (used in the `@relation` attribute above)
+  course           Course         @relation(fields: [courseId], references: [id])
+  courseId         Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt       DateTime       @default(now())
+
+  @@id([academicmatterId, courseId])
+}
+
+model Score {
+  id               Int            @id @default(autoincrement())
+  student          Student        @relation(fields: [studentId], references: [id])
+  studentId        Int
+  academicmatter   AcademicMatter @relation(fields: [academicmatterId], references: [id])
+  academicmatterId Int
+  period           PERIOD
+
+  @@unique([studentId, academicmatterId, period])
+}
+
+enum DEGREE {
+  FIRST_SEMESTER
+  SECOND_SEMESTER
+  THIRD_SEMESTER
+  FOURTH_SEMESTER
+}
+
+enum SECTION {
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+  H
+}
+
+enum PERIOD {
+  FIRST_PERIOD
+  SECOND_PERIOD
+  THIRD_PERIOD
+}
+
+enum ROLE {
+  TEACHER
+  STUDENT
+}

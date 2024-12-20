@@ -1,0 +1,54 @@
+type Mutation {
+  registerTeacher(
+    name: String!
+    lastname: String!
+    password: String!
+    description: String
+    photo: String
+    dni: String!
+    matters: [String!]!
+  ): UserResponse
+
+  registerStudent(
+    name: String!
+    lastname: String!
+    password: String!
+    description: String
+    photo: String
+    dni: String!
+  ): UserResponse
+}
+
+type User {
+  id: ID!
+  role: ROLE!
+  dni: String!
+  created: String
+  modified: String
+  deleted: String
+  userProfile: UserProfile
+}
+
+type UserProfile {
+  id: ID!
+  user: User
+  userId: Int!
+  name: String!
+  lastname: String!
+  description: String
+  photo: String
+  student: Student
+  teacher: Teacher
+  created: String!
+  modified: String
+}
+
+type UserResponse {
+  data: User
+  msg: String
+}
+
+enum ROLE {
+  TEACHER
+  STUDENT
+}

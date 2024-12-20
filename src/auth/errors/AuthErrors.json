@@ -1,0 +1,7 @@
+{
+  "TokenAuthorizationHeaderNotFound": "No se ha podido encontrar su token de validación. Inicie sesión nuevamente",
+  "NotAuthenticated": "No se ha autenticado. Inicie sesión nuevamente",
+  "NotFoundToken": "No se pudo comprobar sus permisos para acceder a este recurso. Vuelva a iniciar sesión",
+  "InvalidToken": "Se ha suministrado un token de autenticación no valido",
+  "NotFound": "No se ha podido resolver esta solicitud, intente nuevamente"
+}

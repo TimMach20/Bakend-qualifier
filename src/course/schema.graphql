@@ -1,0 +1,36 @@
+type Mutation {
+  createCourse(
+    degree: DEGREE!
+    section: SECTION!
+  ): CourseResponse
+}
+
+type Course {
+  id: ID
+  degree: DEGREE!
+  section: SECTION!
+  studens: [Student]
+}
+
+type CourseResponse {
+  data: Course
+  msg: String
+}
+
+enum DEGREE {
+  FIRST_SEMESTER
+  SECOND_SEMESTER
+  THIRD_SEMESTER
+  FOURTH_SEMESTER
+}
+
+enum SECTION {
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+  H
+}
